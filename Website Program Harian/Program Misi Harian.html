@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Program Misi Harian</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+  :root {
+    --color-bg: #ffffff;
+    --color-text-primary: #111827;
+    --color-text-secondary: #6b7280;
+    --color-card-bg: #f9fafb;
+    --color-shadow: rgba(0,0,0,0.05);
+    --border-radius: 0.75rem;
+    --max-width: 800px;
+    --spacing-vertical: 4rem;
+    --accent-color: #6366f1;
+  }
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--spacing-vertical);
+    padding-bottom: var(--spacing-vertical);
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 3rem;
+    color: var(--color-text-primary);
+    margin-bottom: 2rem;
+    user-select: none;
+  }
+  .card {
+    background-color: var(--color-card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 15px var(--color-shadow);
+    padding: 1.5rem 2rem;
+    max-width: 100%;
+    width: 320px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    user-select: none;
+    cursor: pointer;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+  input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+    border-radius: 0.25rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+  }
+  input[type="checkbox"]:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px var(--accent-color);
+  }
+  input[type="checkbox"]:focus-visible {
+    outline-offset: 2px;
+    outline: 2px solid var(--accent-color);
+  }
+  .count {
+    font-weight: 400;
+    color: var(--accent-color);
+  }
+</style>
+</head>
+<body>
+  <h1>Program Misi Harian</h1>
+  <article class="card" aria-label="Misi harian Main Mobile Legend 0 sampai 4">
+    <input type="checkbox" id="mlMission" aria-describedby="missionCount" />
+    <label for="mlMission">
+      Main Mobile Legend <span id="missionCount" class="count">0/4</span>
+    </label>
+  </article>
+
+<script>
+  const maxCount = 4;
+  const checkbox = document.getElementById('mlMission');
+  const countSpan = document.getElementById('missionCount');
+
+  // Fungsi mendapatkan tanggal format yyyy-mm-dd
+  function todayDateString() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  // Cek localStorage untuk tanggal terakhir reset dan nilai count saat ini
+  let lastReset = localStorage.getItem('lastResetDate');
+  let count = 0;
+
+  if (lastReset === todayDateString()) {
+    // Jika hari sama dengan yg tersimpan, load count dari localStorage
+    count = parseInt(localStorage.getItem('count') || '0');
+  } else {
+    // Hari baru, reset count dan update tanggal
+    count = 0;
+    localStorage.setItem('lastResetDate', todayDateString());
+    localStorage.setItem('count', '0');
+  }
+
+  // Tampilkan nilai count awal
+  countSpan.textContent = `${count}/${maxCount}`;
+
+  checkbox.addEventListener('click', () => {
+    if (count < maxCount) {
+      count++;
+      countSpan.textContent = `${count}/${maxCount}`;
+      localStorage.setItem('count', count.toString());
+    }
+    // Reset visual checkbox agar tetap unchecked
+    checkbox.checked = false;
+  });
+
+  // Reset checkbox setiap reload agar kosong walau count tetap bertahan 24 jam
+  checkbox.checked = false;
+</script>
+</body>
+</html>
